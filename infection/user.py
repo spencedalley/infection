@@ -12,7 +12,7 @@ class User():
         connections: list(str), list of user's userIDs that this user is connected to 
         """
         self._id = id
-        self.role = role`
+        self.role = role
         self.infected = infected 
         self.siteVersion = siteVersion 
         self.connections = connections 
