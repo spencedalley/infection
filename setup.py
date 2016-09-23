@@ -4,7 +4,7 @@ except ImportError:
 	from distutils.core import setup
 
 config = {
-    'description': 'DESCRIPTION',
+    'description': 'Khan Academy project based interview question',
     'author': 'infection',
     'url': 'URL',
     'download_url': 'DOWNLOAD_URL',
