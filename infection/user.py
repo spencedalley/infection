@@ -17,3 +17,35 @@ class User():
         self.siteVersion = siteVersion 
         self.connections = connections 
 
+
+def generate_users(n): 
+    # generate `n` users
+    userIds = [str(i) for i in range(n)]
+    users = {}
+    teachersIds = []
+    selfLearnersIds = []
+    currentTeacherId = ''
+
+    # add n-3 users with every 10th user being a teacher
+    for i in range(len(userIds)-3): 
+        if i % 10 == 0: 
+            currentTeacherId = userIds[i]
+            teachersIds.append(currentTeacherId)
+            user = User(userIds[i], 'teacher', False, siteVersion='A', connections=[])
+        else: 
+            user = User(userIds[i], 'student', False, siteVersion='A', connections=[currentTeacherId]) # give teacher connection
+            users[currentTeacherId].connections.append(userIds[i]) # append student Id to teacher
+        
+        users[userIds[i]] = user
+
+    # Add three self-learners
+    for i in range(len(userIds)-3, len(userIds)): 
+        selfLearnersIds.append(userIds[i])
+        users[userIds[i]] = User(userIds[i], 'student', False, siteVersion='A', connections=[])
+
+    users['1'].connections.append(teachersIds[1]) # give one student two teachers
+
+    return (users, teachersIds, selfLearnersIds)
+
+
+
