@@ -46,31 +46,42 @@ class InfectionSimulation():
 
     def total_infection(self, userId): 
         self.globalInfectionSet = self.infect(userId)
-        # print(len(self.globalInfectionSet))
+        return len(self.globalInfectionSet)
 
     def limited_infection(self, target, strict): 
-        infectionCounts = []
-        frontier = {}
+        teacherFrontier = set()
+        frontier = []
         position = 0
 
         for id in self.teacherIds: 
-            self.globalInfectionSet = self.infect(id)
-            frontier[position] = self.teacherIdsExplored
-            if len(self.teacherIdsExplored) > 0: 
-                infectionCounts.append(len(self.globalInfectionSet))
+            if id not in teacherFrontier: 
+                self.globalInfectionSet = self.infect(id)
+                teacherFrontier = teacherFrontier.union(set(self.teacherIdsExplored))
+                frontier.append([len(self.globalInfectionSet), self.teacherIdsExplored])
+                self.teacherIdsExplored = list() # reset list
                 position += 1
-            self.teacherIdsExplored = list() # reset list
 
         for id in self.selfLearnerIds: 
-            frontier[position] = [id] 
-            infectionCounts.append(1)
+            frontier.append([1, [id]])
             position += 1
 
-        print(frontier)
-        print(infectionCounts)
+        infectionCounts = self.subset_sum([count for (count, ids) in frontier], target, strict)
+        frontier.sort()
 
-        subsetSumResult = self.subset_sum(infectionCounts, target, strict)
-        # result = self.extractLocations(subsetSumResult, frontier, infectionCounts)
+        return self.extract_users_to_infect(infectionCounts, frontier)
+
+    def extract_users_to_infect(self, infectionCounts, frontier): 
+        if infectionCounts == []: 
+            return [] 
+
+        result = []
+
+        for item in frontier: 
+            if len(infectionCounts) > 0 and item[0] == infectionCounts[0]: 
+                result.append(item[1])
+                infectionCounts.pop(0)
+
+        return result
 
     def subset_sum(self, nArr, target, strict): 
         closestSum = 0 
@@ -94,69 +105,6 @@ class InfectionSimulation():
         else: 
             return sorted(result)
 
-    def powerset(iterable):
-        s = list(iterable)
-        return chain.from_iterable(combinations(s, r) for r in range(len(s)+1))
-
-
-
-
-        
-    # def total_infection(self, userId): 
-    #     """Infect user and user's connections
-
-    #     Parameters
-    #     ----------
-    #     userId : str, the id of the user
-
-    #     Returns
-    #     -------
-    #     infectedSet: set, a set of all infected userIds
-    #     """
-    #     infectedSet = set()
-
-    #     if not self.users.get(userId) or self.users[userId].infected == True: 
-    #         return infectedSet
-
-    #     self.users[userId].infected = True # change infection 
-    #     self.users[userId].siteVersion = 'B' # change site-version 
-    #     infectedSet.add(userId)
-
-    #     for id in self.users[userId].connections: 
-    #         infectedSet = infectedSet | self.total_infection(id)
-
-    #     return infectedSet
-
-    # def limited_infection(self, userId, n, strict): 
-    #     """Infect user and user's connections limit by less than equal to `n`. If `strict` is True limit by exactly `n`. 
-
-    #     Parameters
-    #     ----------
-    #     userId : str, the id of the user
-    #     n      : int, max number of users that can be infected. 
-    #     strict : bool, if True then algorithm attempts to infect exactly `n` users. 
-
-    #     Return
-    #     ------
-    #     result : bool, returns whether or not infecting userId will result in < n infections
-
-    #     """
-    #     # look at the teachers that we can infect based on a studentId/teacherId
-    #     # 
-    #     frontier = [] # just a list of connected people 
-
-
-
-    # def limited_infection_validation(self): 
-    #     pass
-
-
-
-
-if __name__ == '__main__': 
-    infectionSimulation = InfectionSimulation(20)
-    infectionSet = infectionSimulation.total_infection(infectionSimulation.teacherIds[0])
-    print(infectionSet)
 
 
 

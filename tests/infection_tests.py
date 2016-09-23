@@ -11,7 +11,7 @@ def init_users():
         '2': User('2', 'teacher', False, 'A', [str(i) for i in range(16, 21)]+['15']),
         '3': User('3', 'teacher', False, 'A', [str(i) for i in range(21, 25)]+['26']),
         '4': User('4', 'teacher', False, 'A', [str(i) for i in range(26, 31)]),
-        '5': User('5', 'student', False, 'A', ['31']), # no students
+        '5': User('5', 'teacher', False, 'A', ['31']), # no students
 
         # Students with teachers
         '6': User('6', 'student', False, 'A', ['0']),
@@ -99,13 +99,38 @@ def test_total_infection():
         assert_true(len(infectionSimulation.globalInfectionSet) == expected, 'Expected: {}, Actual: {}'.format(expected, len(infectionSimulation.globalInfectionSet)))
 
 def test_limited_infection(): 
-    nSet = [1, 10, 20, 30, 50]
+    nSet = [-1, 1, 10, 17, 29, 31, 33, 40]
+    expected = [[],
+                [['32']], 
+                [['32'], ['33'], ['5']], 
+                [['32'], ['33'], ['5'], ['3', '4']], 
+                [['3', '4'], ['0', '1', '2']], 
+                [['5'], ['3', '4'], ['0', '1', '2']], 
+                [['32'], ['33'], ['5'], ['3', '4'], ['0', '1', '2']], 
+                [['32'], ['33'], ['5'], ['3', '4'], ['0', '1', '2']]]
 
-    for i in nSet: 
+    for i in range(len(nSet)): 
         USERS, TEACHER_IDS, SELF_LEARNER_IDS = init_users()
         infectionSimulation = InfectionSimulation(USERS, TEACHER_IDS, SELF_LEARNER_IDS) 
-        infectionSimulation.limited_infection(i, False)
-        # assert True == False
+        result = infectionSimulation.limited_infection(nSet[i], False)
+        assert_true(result == expected[i], '\nActual: {}\nExpected: {}'.format(result, expected[i]))
+
+    # strict testing (i.e. limit to exactly `n` infections)
+    nSet = [-1, 1, 10, 17, 29, 31, 33, 40]
+    expected = [[],
+                [['32']], 
+                [], 
+                [], 
+                [['3', '4'], ['0', '1', '2']], 
+                [['5'], ['3', '4'], ['0', '1', '2']], 
+                [['32'], ['33'], ['5'], ['3', '4'], ['0', '1', '2']], 
+                []]
+
+    for i in range(len(nSet)): 
+        USERS, TEACHER_IDS, SELF_LEARNER_IDS = init_users()
+        infectionSimulation = InfectionSimulation(USERS, TEACHER_IDS, SELF_LEARNER_IDS) 
+        result = infectionSimulation.limited_infection(nSet[i], True)
+        assert_true(result == expected[i], '\nActual: {}\nExpected: {}'.format(result, expected[i]))
 
 def test_subset_sum(): 
     USERS, TEACHER_IDS, SELF_LEARNER_IDS = init_users()
