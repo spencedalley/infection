@@ -5,10 +5,10 @@ except ImportError:
 
 config = {
     'description': 'Khan Academy project based interview question',
-    'author': 'infection',
+    'author': 'spence dalley',
     'url': 'URL',
     'download_url': 'DOWNLOAD_URL',
-    'author_email': 'EMAIL',
+    'author_email': 'dalley.spence@gmail.com',
     'version': '0.1',
     'install_requires': ['nose'],
     'packages': ['infection'],
