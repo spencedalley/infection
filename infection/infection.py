@@ -4,73 +4,121 @@ from .user import *
 
 class InfectionSimulation(): 
 
-    def __init__(self, users, teacherIds, selfLearnerIds): 
-        # self.users, self.teacherIds, self.selfLearnerIds = generate_users(n)
-        self.users = users.copy()
+    def __init__(self, users, teacherIds, selfLearnerIds, siteVersion): 
+        """Initialize the InfectionSimulation
+
+        Parameters
+        ----------
+        users : dict(str: User), a mapping of userIds to User objects
+        teacherIds : list(str), a list of all the teacher IDs in users dict 
+        selfLearnerIds : list(str), a list of all the self learner IDs in users dict
+        siteVersion : str, site version that is being tested
+        """
+        self.users = dict(users)
         self.teacherIds = list(teacherIds) 
         self.selfLearnerIds = list(selfLearnerIds)
+        self.siteVersion = siteVersion
         self.globalInfectionSet = set()
         self.teacherIdsExplored = list()
-        self.position = 0
-
+        
     def infect(self, userId): 
-        """Infect user and user's connections
+        """Infect userId and userId's connections
 
         Parameters
         ----------
         userId : str, the id of the user
-        n      : int, max number of users that can be infected. 
-        strict : bool, if True then algorithm attempts to infect exactly `n` users. 
 
         Returns
         -------
-        infectedSet: 
+        infectedSet: set(str), a set of userId's that have been infected
         """
-        # This is the modified infected user set...
-        infectedSet = set()
-
         if not self.users.get(userId) or self.users[userId].infected == True: 
-            return infectedSet
+            return set()
+
+        infectedSet = set()
         
-        self.users[userId].infected = True # change infection 
-        self.users[userId].siteVersion = 'B' # change site-version 
+        self.users[userId].infected = True 
+        self.users[userId].siteVersion = self.siteVersion 
         if self.users[userId].role == 'teacher': 
             self.teacherIdsExplored.append(userId)
 
         infectedSet.add(userId)
 
         for id in self.users[userId].connections: 
-            infectedSet = infectedSet | self.infect(id)
+            # depth-first search
+            infectedSet = infectedSet.union(self.infect(id))
 
         return infectedSet
 
     def total_infection(self, userId): 
+        """Infect userId and get set of all users that will be infected as a result. 
+        This method returns the number of users that will have been infected if userId 
+        is infected. To view all of the user ID's that have been infected, access the 
+        globalInfectionSet attribute. 
+
+        Parameters
+        ----------
+        userId : str, the id of the user
+
+        Returns
+        -------
+        result: int, number of users that have been infected
+        """
         self.globalInfectionSet = self.infect(userId)
         return len(self.globalInfectionSet)
 
     def limited_infection(self, target, strict): 
-        teacherFrontier = set()
+        """Infect userId and get set of all users that will be infected as a result. 
+        This method returns the number of users that will have been infected if userId 
+        is infected. To view all of the user ID's that have been infected, access the 
+        globalInfectionSet attribute. 
+
+        Parameters
+        ----------
+        target : int, target number of users to be infected
+        strict : bool, indicate whether exactly `target` number of users are to 
+                 be infected or not. 
+
+        Returns
+        -------
+        result: list(list(str, ...,), ...,), 
+                returns a list of lists of userIds that can be infected to get `target` 
+                amount of users to be infected
+        """
         frontier = []
-        position = 0
 
         for id in self.teacherIds: 
-            if id not in teacherFrontier: 
-                self.globalInfectionSet = self.infect(id)
-                teacherFrontier = teacherFrontier.union(set(self.teacherIdsExplored))
-                frontier.append([len(self.globalInfectionSet), self.teacherIdsExplored])
-                self.teacherIdsExplored = list() # reset list
-                position += 1
+            result = self.infect(id)
+            if result: 
+                frontier.append([len(result), self.teacherIdsExplored])
+                self.teacherIdsExplored = list() # reset 
 
         for id in self.selfLearnerIds: 
             frontier.append([1, [id]])
-            position += 1
 
-        infectionCounts = self.subset_sum([count for (count, ids) in frontier], target, strict)
         frontier.sort()
-
+        infectionCounts = self.subset_sum([count for (count, ids) in frontier], target, strict)
+        
         return self.extract_users_to_infect(infectionCounts, frontier)
 
     def extract_users_to_infect(self, infectionCounts, frontier): 
+        """Infect userId and get set of all users that will be infected as a result. 
+        This method returns the number of users that will have been infected if userId 
+        is infected. To view all of the user ID's that have been infected, access the 
+        globalInfectionSet attribute. 
+
+        Parameters
+        ----------
+        infectionCounts : list(int), count of infections that add up/close to `target`
+        frontier : list(list(int, list(str)), ...), a collection of [number of infections, [userIds]] 
+
+        Returns
+        -------
+        result: list(list(str, ...,), ...,), 
+                returns a list of lists of userIds that can be infected to get `target` 
+                amount of users to be infected
+        """
+
         if infectionCounts == []: 
             return [] 
 
@@ -84,12 +132,25 @@ class InfectionSimulation():
         return result
 
     def subset_sum(self, nArr, target, strict): 
-        closestSum = 0 
-        result = []
+        """Find subset of `nArr` that sums closest to `target` if `strict` is False else
+        sums exactly to `target` if `strict` is True. 
 
+        Parameters
+        ----------
+        nArr : list(int), a list of numbers
+        target : int, target sum
+        strict : bool, indicate whether to find subset exactly equal to `target` or not
+
+        Returns
+        -------
+        result: list(int), list of integers that sum closest or exactly to `target` else returns
+                blank list (i.e. list())
+        """
         if min(nArr) > target or target <= 0: 
             return []
 
+        closestSum = 0 
+        result = []
         powerset = chain.from_iterable(combinations(nArr, r) for r in range(len(nArr)+1))
 
         for item in powerset: 
@@ -104,11 +165,5 @@ class InfectionSimulation():
             return []
         else: 
             return sorted(result)
-
-
-
-
-
-
 
 
