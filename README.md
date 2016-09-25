@@ -1,29 +1,36 @@
 ## Infection Project
 The goal of this project is to give you an opportunity to code on the sort of problem that we would actually tackle here at Khan Academy.
 
-[Write in some notes about your thought process]
+### Setup: 
+Running the infection simulation requires the following version of python: 
 
-#### Installation: 
-Running the infection simulation requires setting this package from source. You'll need to install:
+*   python 3.4 or above
 
-*   python 2.7 or python 3.4 and above:
+Dependency requirements for this project can be found in the requirements.txt file. Install the requirements with the following command: 
+```
+$ pip install -r requirements.txt 
+```
 
-Setup the database running the following commands: 
-* 
+The project should now be ready to run. 
 
-#### Running Tests: 
-To run tests cd to the root of the project and run the following command: 
+### Running Tests: 
+All the tests for this module are located in the `tests/infection_test.py` file. 
+
+To run the tests, open up a terminal, cd to the root of the project, and type `nosetests` to run the tests. You should get an output like the text below: 
 
 ```
 $ nosetests
 
-.
+.....
 ----------------------------------------------------------------------
-Ran 1 test in 0.004s
+Ran 5 tests in 0.010s
 
 OK
 ```
 
 All tests should pass. 
+
+## Implementation Notes: 
+[Add notes]
 
 
