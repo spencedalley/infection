@@ -132,8 +132,8 @@ class InfectionSimulation():
         return result
 
     def subset_sum(self, nArr, target, strict): 
-        """Find subset of `nArr` that sums closest to `target` if `strict` is False else
-        sums exactly to `target` if `strict` is True. 
+        """Find subset of `nArr` that sums closest (without exceeding) to `target` if `strict` 
+        is False else sums exactly to `target` if `strict` is True. 
 
         Parameters
         ----------
