@@ -1,17 +1,17 @@
 ## Infection Project
-The goal of this project is to give you an opportunity to code on the sort of problem that we would actually tackle here at Khan Academy.
+This project simulates an infections spread throughout an interconnected network. There are two methods of the simulation that are publicly availiable: `total_infection` and `limited_infection`. `total_infection` maps an infections complete infection course throughout a network. `limited_infection` attempts to infect a target number of individuals. 
 
 ### Setup: 
 Running the infection simulation requires the following version of python: 
 
 *   python 3.4 or above
 
-Dependency requirements for this project can be found in the requirements.txt file. Install the requirements with the following command: 
+Dependency requirements for this project can be found in the requirements.txt file. Install the requirements with the following command after cd to the module's root: 
 ```
-$ pip install -r requirements.txt 
+$ sudo pip install -r requirements.txt 
 ```
 
-The project should now be ready to run. 
+The project setup is now complete. 
 
 ### Running Tests: 
 All the tests for this module are located in the `tests/infection_test.py` file. 
